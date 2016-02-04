@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 
@@ -22,7 +21,7 @@ SECRET_KEY = '0#p8gguv!-jv4ec8t%chh5o4+$pz76yn!7zl179!q6r5*14_8&'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-TEMPLATE_DEBUG = True
+TEMPLATE_DEBUG = DEBUG
 
 ALLOWED_HOSTS = []
 
@@ -37,7 +36,9 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'oauth2_provider',
-    'corsheaders',
+    'social.apps.django_app.default',
+    'rest_framework_social_oauth2',
+    'rest_framework',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -47,15 +48,12 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
+    # 'testoauth.middlewares.SocialAuthExceptionMiddleware'
 )
-
-CORS_ORIGIN_ALLOW_ALL = True
 
 ROOT_URLCONF = 'testoauth.urls'
 
 WSGI_APPLICATION = 'testoauth.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
@@ -85,3 +83,44 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATIC_URL = '/static/'
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.contrib.auth.context_processors.auth',
+    'social.apps.django_app.context_processors.backends',
+    'social.apps.django_app.context_processors.login_redirect',
+)
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'oauth2_provider.ext.rest_framework.OAuth2Authentication',
+        'rest_framework_social_oauth2.authentication.SocialAuthentication',
+    ),
+}
+
+AUTHENTICATION_BACKENDS = (
+    'social.backends.facebook.FacebookAppOAuth2',
+    'social.backends.facebook.FacebookOAuth2',
+    'social.backends.google.GoogleOAuth2',
+    'rest_framework_social_oauth2.backends.DjangoOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+SOCIAL_AUTH_FACEBOOK_KEY = '568321396652052'
+SOCIAL_AUTH_FACEBOOK_SECRET = '539ef06614b9fc76e5c857cb542c84ec'
+
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
+
+LOGIN_ERROR_URL = '/'
+
+SOCIAL_AUTH_BACKEND_ERROR_URL = '/'
+
+SOCIAL_AUTH_RAISE_EXCEPTIONS = False
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '484305866426-rmgu6niola30d89n0qp8414mb4h9918k.apps.googleusercontent.com'
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'j2eg79_jaSiaYgDoXAEYLzz-'
